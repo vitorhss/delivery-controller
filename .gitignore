@@ -1,0 +1,15 @@
+.classpath
+.project
+.settings/
+bin/
+mvnw
+mvnw.cmd
+.mvn/
+.DS_Store
+target/*
+!target/*.jar
+*.class
+application.pid
+application.port
+.vagrant/
+/target/
