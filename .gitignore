@@ -11,5 +11,4 @@ target/*
 *.class
 application.pid
 application.port
-.vagrant/
 /target/
