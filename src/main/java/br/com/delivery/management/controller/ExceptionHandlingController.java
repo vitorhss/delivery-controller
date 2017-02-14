@@ -3,6 +3,7 @@ package br.com.delivery.management.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -42,8 +43,12 @@ public class ExceptionHandlingController {
 		}
 
 		return new ResponseEntity<List<FieldErro>>(list, HttpStatus.PRECONDITION_FAILED);
-
-		
+	
+	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<Error> resourceNotFound(ResourceNotFoundException exception){
+		return new ResponseEntity<Error>(new Error(exception.getMessage()), HttpStatus.NOT_FOUND);
 	}
 
 		
