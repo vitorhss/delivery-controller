@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.delivery.management.domain.MalhaLogistica;
@@ -54,6 +55,7 @@ public class MalhaLogisticaServiceImpl implements MalhaLogisticaService  {
 
 		String rota = "";
 		String pontoFinalAtual = "";
+		String pontoFinalAnterior = "";
 
 		List<Rota> lstRotas = new ArrayList<>();
 
@@ -73,24 +75,24 @@ public class MalhaLogisticaServiceImpl implements MalhaLogisticaService  {
 			
 			else {
 
-				if (isPontoInicial(pontoInicial, pontoFinalAtual, malha)) {
+				if (isPontoInicial(pontoInicial, pontoFinalAtual, malha) && distancia == 0) {
 					distancia += malha.getDistancia();
 
 					pontoFinalAtual = malha.getPontoFinal();
 
 					rota += pontoInicial + pontoFinalAtual;
+					
 				}
 				else{
 					
 					if (isPontoFinalAnterior(malha.getPontoInicial(), pontoFinalAtual)) {
 						distancia += malha.getDistancia();
-						
+						pontoFinalAnterior = pontoFinalAtual;
 						pontoFinalAtual = malha.getPontoFinal();
-						
 						rota += pontoFinalAtual;
 					}
 					
-					if (isPontoFinal(malha.getPontoFinal(), pontoFinal)) {
+					if (isPontoFinal(malha.getPontoFinal(), pontoFinal, malha.getPontoInicial(), pontoFinalAnterior)) {
 						valorCusto = calculaCusto(distancia, autonomia, valorKilometro);
 
 						lstRotas.add(new Rota(rota, valorCusto));
@@ -99,6 +101,7 @@ public class MalhaLogisticaServiceImpl implements MalhaLogisticaService  {
 						rota = "";
 						pontoFinalAtual = "";
 					}
+					
 				}
 			}
 		}
@@ -107,12 +110,16 @@ public class MalhaLogisticaServiceImpl implements MalhaLogisticaService  {
 	}
 	
 	private Rota obterMelhorRota( List<Rota> rotasSelecionadas){
+		if(rotasSelecionadas.isEmpty()){
+			throw new ResourceNotFoundException("Não foi encontrada nenhuma rota para e destino informadas");
+		}
+		
 		Rota melhorRota = Collections.min(rotasSelecionadas);
 		return melhorRota;
 	}
 
-	private boolean isPontoFinal(String pontoFinalAtual, String pontoFinal) {
-		return pontoFinalAtual.equals(pontoFinal);
+	private boolean isPontoFinal(String pontoFinalAtual, String pontoFinal, String pontoInicialAtual, String pontoFinalAnterior) {
+		return pontoFinalAtual.equals(pontoFinal) && pontoFinalAnterior.equals(pontoInicialAtual) ;
 	}
 	
 	private boolean isPontoFinalAnterior(String pontoInicialAtual, String pontoFinalAnterior){
