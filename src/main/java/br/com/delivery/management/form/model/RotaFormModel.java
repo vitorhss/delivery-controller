@@ -13,10 +13,10 @@ public class RotaFormModel {
 	private String pontoFinal;
 	
 	@NotNull
-	private double autonomiaCaminhao;
+	private Double autonomiaCaminhao;
 	
 	@NotNull
-	private double valorKilometro;
+	private Double valorKilometro;
 
 	public String getNome() {
 		return nome;
