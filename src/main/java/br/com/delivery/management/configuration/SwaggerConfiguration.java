@@ -55,7 +55,6 @@ public class SwaggerConfiguration {
 				.paths(PathSelectors.any())
 				.build()
 				.pathMapping("/")
-				.directModelSubstitute(LocalDate.class, String.class)
 				.genericModelSubstitutes(ResponseEntity.class)
 				.alternateTypeRules(
 						newRule(typeResolver.resolve(DeferredResult.class,
